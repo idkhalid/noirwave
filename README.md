@@ -6,7 +6,7 @@ This repository is a work-in-progress modification of [Monochrome](https://githu
 
 The [local runtime audit](docs/audit/02-runtime-validation.md) tested the application on `127.0.0.1` in headless Chrome. Search returned tracks, a provider stream returned HTTP 206 and the browser audio clock advanced. Pause, resume, seek, Next, Previous, queue add/remove, shuffle toggle, repeat mode selection, and queue/mode persistence were observed. These observations apply to that local session, endpoint, and date; they do not establish reliable playback on a public domain.
 
-The audit did not verify local-file playback, queue drag-and-drop, repeat-all completion, Android, or a public deployment. It found that the repeat button did not reflect a restored mode after reload; the current working tree contains a proposed fix, which has not been included in the runtime audit. See the audit for the full results and limitations.
+The follow-up audit observed repeat-all at natural completion and verified that the Repeat button reflects restored modes after reload. It also reproduced intermittent buffering during direct FLAC seeks. Local-file playback, queue drag-and-drop, Android, and public deployment remain unverified. See the audit for the full results and limitations.
 
 ## Prerequisites and local setup
 

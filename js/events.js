@@ -766,13 +766,17 @@ export async function initializePlayerEvents(player, audioPlayer, scrobbler, ui)
         if (window.renderQueueFunction) await window.renderQueueFunction();
     });
 
-    repeatBtn.addEventListener('click', async () => {
-        await hapticLight();
-        const mode = await player.toggleRepeat();
+    const updateRepeatButton = (mode) => {
         repeatBtn.classList.toggle('active', mode !== REPEAT_MODE.OFF);
         repeatBtn.classList.toggle('repeat-one', mode === REPEAT_MODE.ONE);
         repeatBtn.title =
             mode === REPEAT_MODE.OFF ? 'Repeat' : mode === REPEAT_MODE.ALL ? 'Repeat Queue' : 'Repeat One';
+    };
+    updateRepeatButton(player.repeatMode);
+    repeatBtn.addEventListener('click', async () => {
+        await hapticLight();
+        const mode = await player.toggleRepeat();
+        updateRepeatButton(mode);
     });
 
     window.addEventListener('radio-state-changed', (e) => {
