@@ -8,7 +8,7 @@ Thank you for your interest in contributing to Monochrome! This guide will help 
 
 - [Development Setup](#development-setup)
 - [Code Quality](#code-quality)
-- [Project Structure](#project-structure)
+- [Key Directories](#key-directories)
 - [Before You Contribute](#before-you-contribute)
 - [Contributing Workflow](#contributing-workflow)
 - [Commit Message Guidelines](#commit-message-guidelines)

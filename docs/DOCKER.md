@@ -112,7 +112,7 @@ docker compose --profile pocketbase up -d
 
 #### PocketBase Schema Note
 
-The current PocketBase collection schema is committed at [`database/pb_schema.json`](database/pb_schema.json). Import that schema into a fresh PocketBase instance when setting up account data storage.
+The current PocketBase collection schema is committed at [`database/pb_schema.json`](../database/pb_schema.json). Import that schema into a fresh PocketBase instance when setting up account data storage.
 
 ---
 

@@ -1,31 +1,41 @@
-node_modules
-dist
-.DS_Store
-*.local
-.vite
-.claude
-# Docker
-.env
-# Neutralino
-.tmp/
+# Dependencies
+node_modules/
+
+# Vite, build, and test output
+dist/
+dev-dist/
+.vite/
 .vitest-attachments/
-**/__screenshots__/*
-bin/
-*.log
+**/__screenshots__/
+coverage/
+.tmp/
 .storage/
 auth_storage/
-www
-neutralino.js
-package-lock.json
-# Direnv
+.wrangler/
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.local
 .envrc
-# vim
-.lazy.lua
-Caddyfile
-dev-dist
-load-balancer
-# We already have bun.lock, bun.lockb is redundant
-bun.lockb,
-bun.lock
-.wrangler
-.opencode
+
+# Logs and runtime files
+*.log
+*.log.*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS and personal editor state
+.DS_Store
+Thumbs.db
+Desktop.ini
+.idea/
+*.swp
+*.swo
+*~
+.claude/
+.opencode/

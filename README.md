@@ -1,282 +1,46 @@
- <p align="center">
-  <a href="https://monochrome.st">
-    <img src="https://github.com/monochrome-music/monochrome/blob/main/public/assets/512.png?raw=true" alt="Monochrome Logo" width="150px">
-  </a>
-</p>
+# Monochrome modification
 
-<h1 align="center">Monochrome</h1>
+This repository is a work-in-progress modification of [Monochrome](https://github.com/monochrome-music/monochrome), a web music player. The current work focuses on playback behavior, queue controls, recommendations, and the interface. It retains upstream code and attribution; this repository is not an official Monochrome release.
 
-<p align="center">
-  <strong>An open-source, privacy-respecting, ad-free music app.</strong>
-</p>
+## Verified status
 
-<p align="center">
-  <a href="https://monochrome.st">Website</a> -
-  <a href="https://ko-fi.com/monochrometf">Donate</a> -
-  <a href="#features">Features</a> -
-  <a href="#usage">Usage</a> -
-  <a href="#self-hosting">Self-Hosting</a> -
-  <a href="CONTRIBUTING.md">Contributing</a>
-</p>
+The [local runtime audit](docs/audit/02-runtime-validation.md) tested the application on `127.0.0.1` in headless Chrome. Search returned tracks, a provider stream returned HTTP 206 and the browser audio clock advanced. Pause, resume, seek, Next, Previous, queue add/remove, shuffle toggle, repeat mode selection, and queue/mode persistence were observed. These observations apply to that local session, endpoint, and date; they do not establish reliable playback on a public domain.
 
-<p align="center">
-  <a href="https://github.com/monochrome-music/monochrome/stargazers">
-    <img src="https://img.shields.io/github/stars/monochrome-music/monochrome?style=for-the-badge&color=ffffff&labelColor=000000" alt="GitHub stars">
-  </a>
-  <a href="https://github.com/monochrome-music/monochrome/forks">
-    <img src="https://img.shields.io/github/forks/monochrome-music/monochrome?style=for-the-badge&color=ffffff&labelColor=000000" alt="GitHub forks">
-  </a>
-  <a href="https://github.com/monochrome-music/monochrome/issues">
-    <img src="https://img.shields.io/github/issues/monochrome-music/monochrome?style=for-the-badge&color=ffffff&labelColor=000000" alt="GitHub issues">
-  </a>
-</p>
+The audit did not verify local-file playback, queue drag-and-drop, repeat-all completion, Android, or a public deployment. It found that the repeat button did not reflect a restored mode after reload; the current working tree contains a proposed fix, which has not been included in the runtime audit. See the audit for the full results and limitations.
 
----
+## Prerequisites and local setup
 
-## What is Monochrome?
+- [Bun](https://bun.sh/) and Git.
+- A modern browser. Browser tests also require Playwright and an available Chromium installation.
+- Network access to the provider endpoints for provider-backed catalog and audio behavior. Availability and permission may vary.
 
-**Monochrome** is an open-source, privacy-respecting, ad-free web music player. It provides a beautiful, minimalist interface for streaming high-quality music without the clutter of traditional streaming platforms.
-
-## Features
-
-### Audio Quality
-
-- High-quality High-Res/lossless audio streaming
-- Support for local music files
-- API caching for improved performance
-
-### Interface
-
-- Dark, minimalist interface optimized for focus
-- Animated Album Covers For Supported Albums
-- Customizable themes & Community Theme Store
-- Accurate and unique audio visualizer
-- Offline-capable Progressive Web App (PWA)
-- Media Session API integration for system controls
-
-### Library & Organization
-
-- Recently Played tracking for easy history access
-- Comprehensive Personal Library for favorites
-- Queue management with shuffle and repeat modes
-- Native Podcast support & organization
-- Playlist import from other platforms
-- Public playlists for social sharing
-- Smart recommendations for new songs, albums & artists
-- Infinite Recommendation Radio
-- Explore Page (Hot & New) for discovering newly added music and whats trending overall or within each genre
-
-### Lyrics & Metadata
-
-- Lyrics support with karaoke mode
-- Genius integration for lyrics
-- Track downloads with automatic metadata embedding
-
-### Integrations
-
-- Account system for cross-device syncing
-- Customizable & Public Profiles
-- Real-time Listening Parties for synced playback with friends
-- Last.fm and ListenBrainz integration for scrobbling
-- OAuth support (Google, Discord, GitHub, Spotify)
-- Unreleased music from [ArtistGrid](https://artistgrid.cx)
-- Dynamic Discord Embeds
-- Artist Biography + Social Links for learning more about your favorite artists
-- Multiple API instance support with failover
-
-### Power User Features
-
-- Keyboard shortcuts & Command Palette (CTRL+K) for power users
-
----
-
-## Quick Start
-
-### Live Instance
-
-Our Recommended way to use monochrome is through our official instance:
-
-**[monochrome.st](https://monochrome.st)**
-
-For alternative instances, check [INSTANCES.md](INSTANCES.md).
-
----
-
-## Self-Hosting
-
-NOTE: Accounts will not work on self-hosted instances. Our Appwrite authentication system only allows authorized domains.
-
-We had to heavily customize the authentication system and write several custom scripts to support features like SMTP and Google OAuth (which are currently bugged in Appwrite). Because of this, we can no longer provide a self-hostable accounts system.
-
-> [!WARNING]
-> You will not be able to stream music after self-hosting and placing the website on a domain. Our API is configured to only accept official instances of Monochrome so you can only stream music on localhost after self-hosting. However, if you have a working and paid HiFi API endpoint then Settings > Instances > Turn on Dev Mode > Place your endpoint there.
-
-### Option 1: Docker (Recommended)
+From the repository root:
 
 ```bash
-git clone https://github.com/monochrome-music/monochrome.git
-cd monochrome/docker
-docker compose up -d
+bun install --frozen-lockfile
+bun run dev
 ```
 
-Visit `http://localhost:3000`
+Open the address printed by Vite, normally `http://localhost:5173/`. `bun.lock` is the committed dependency lockfile; keep it with `package.json`. Do not generate an npm lockfile for this setup.
 
-### Tailscale Access
+Available checks include `bun run test:headless`, `bun run lint`, and `bun run build`. The build writes to `dist/`. These commands do not validate provider authorization or a public deployment.
 
-Visit `http://<tailscale_server_hostname_or_ip>:3000`
+## Provider and deployment limits
 
-By default, the app uses Vite preview, which restricts access to localhost.  
-To allow access over Tailscale:
+The active catalog and audio paths call external services, including Monochrome endpoints. The [source/API audit](docs/audit/01-source-api-audit.md) found no documented permission for this modified project's future public domain. Upstream documentation warns that official audio endpoints may allow only localhost and official domains, and that account services are domain restricted. A localhost stream test does not grant access for another domain. Public playback, self-hosted accounts, and Android support remain unverified; do not treat the Docker guide or the presence of Capacitor dependencies as proof that they work.
 
-1. Open `vite.config.js`
+Use audio and provider services only where you have the necessary rights and access. Third-party media, artwork, fonts, and other assets may have separate terms from the source code license.
 
-2. Uncomment and configure the `preview` section:
+## Repository and documentation
 
-```js
-preview: {
-    host: true,
-    allowedHosts: ['<your_tailscale_hostname>'], // e.g. pi5.tailf5f622.ts.net
-},
-```
+- `src/`, `js/`, `index.html`, `styles.css`: application UI and playback code.
+- `functions/`: serverless endpoints; `public/`, `images/`, `assets/`: shipped static assets.
+- `database/`: PocketBase schema and its [local notes](database/README.md).
+- `docs/`: [architecture](docs/Architecture.md), [implementation plan](docs/Implementation.md), [contributing guide](docs/CONTRIBUTING.md), [Docker guide](docs/DOCKER.md), [instances reference](docs/INSTANCES.md), [theme guide](docs/THEME_GUIDE.md), and this [cleanup report](docs/repository-cleanup.md).
+- `docs/audit/`: source and runtime audit reports with reproduction scripts. Earlier audit entries are historical snapshots and may describe an older working tree.
 
-3. Restart with a fresh container (if already running):
+The Docker and instances documents come from upstream and contain historical setup or endpoint information. Verify them against the current code and provider terms before relying on them.
 
-```bash
-docker compose down
-docker compose up -d
-```
+## License and upstream attribution
 
-For development mode and advanced setups, see [DOCKER.md](DOCKER.md).
-
-### Option 2: Manual Installation
-
-#### Prerequisites
-
-- [Bun](https://bun.sh/) (Preferred) or [Node.js](https://nodejs.org/) (Version 20+ or 22+ recommended)
-- [Git](https://git-scm.com/)
-
-#### Apple Music Search
-
-Monochrome requests an Apple Music developer token from `https://am-mint.binimum.org/token` in the browser and caches
-it locally until the JWT expires. Apple Music supplies catalog ordering and autocomplete suggestions; when token minting,
-Apple's API, or CORS is unavailable, Monochrome automatically uses its existing search ordering.
-
-When Apple exposes editorial motion artwork for a matched album, Monochrome also uses its square HLS video cover on
-album and now-playing surfaces, with the static cover retained as the fallback.
-
-#### PocketBase Schema
-
-The current PocketBase collection schema is stored in [`database/pb_schema.json`](database/pb_schema.json). Import this schema into a fresh PocketBase instance when setting up account data storage.
-
-#### Local Development
-
-1. **Clone the repository:**
-
-    ```bash
-    git clone https://github.com/monochrome-music/monochrome.git
-    cd monochrome
-    ```
-
-2. **Install dependencies:**
-
-    ```bash
-    bun install
-    # or
-    npm install # NPM is included with Node.js
-    ```
-
-3. **Start the development server:**
-
-    ```bash
-    bun run dev
-    # or
-    npm run dev
-    ```
-
-4. **Open your browser:**
-   Navigate to `http://localhost:5173/`
-
-#### Building for Production
-
-```bash
-bun run build
-# or
-npm run build
-```
-
----
-
-## Usage
-
-### Basic Usage
-
-1. Visit the [Website](https://monochrome.st) or your local development server
-2. Search for your favorite artists, albums, or tracks
-3. Click play to start streaming
-4. Use the media controls to manage playback, queue, and volume
-
-### Keyboard Shortcuts
-
-| Shortcut      | Action                       |
-| ------------- | ---------------------------- |
-| `Space`       | Play / Pause                 |
-| `→`           | Seek forward 10s             |
-| `←`           | Seek backward 10s            |
-| `Shift` + `→` | Next track                   |
-| `Shift` + `←` | Previous track               |
-| `↑`           | Volume up                    |
-| `↓`           | Volume down                  |
-| `M`           | Mute / Unmute                |
-| `S`           | Toggle shuffle               |
-| `R`           | Toggle repeat                |
-| `Q`           | Open queue                   |
-| `L`           | Toggle lyrics                |
-| `/`           | Focus search                 |
-| `Esc`         | Close modals                 |
-| `[`           | Previous visualizer preset   |
-| `]`           | Next visualizer preset       |
-| `\`           | Toggle visualizer auto-cycle |
-| `Ctrl` + `K`  | Command Palette              |
-
-### Account Features
-
-To sync your library, history, and playlists across devices:
-
-1. Click the "Accounts" Section
-2. Sign in with Google or Email
-3. Your data will automatically sync across all devices
-
----
-
-## Contributing
-
-We welcome contributions from the community! Please see our [Contributing Guide](CONTRIBUTING.md) for:
-
-- Setting up your development environment
-- Code style and linting
-- Project structure
-- Before You Contribute
-- Commit message conventions
-- Deployment information
-
----
-
-<p align="center">
-  <a href="https://fmhy.net/audio#streaming-sites">
-    <img src="https://raw.githubusercontent.com/monochrome-music/monochrome/refs/heads/main/public/assets/asseenonfmhy880x310.png" alt="As seen on FMHY" height="50">
-  </a>
-</p>
-
-<p align="center">
-  Made with ❤️ by the Monochrome team
-</p>
-
-## Star History
-
-<a href="https://star-history.dera.page/#monochrome-music/monochrome&type=date&logscale&legend=top-left">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://star-history.dera.page/svg?repos=monochrome-music/monochrome&type=date&theme=dark&logscale&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://star-history.dera.page/svg?repos=monochrome-music/monochrome&type=date&logscale&legend=top-left" />
-   <img alt="Star History Chart" src="https://star-history.dera.page/svg?repos=monochrome-music/monochrome&type=date&logscale&legend=top-left" />
- </picture>
-</a>
+The source is distributed under [Apache License 2.0](license). Original Monochrome code and copyright notices remain attributed to the [upstream project](https://github.com/monochrome-music/monochrome). Changes in this repository are independent modifications.
